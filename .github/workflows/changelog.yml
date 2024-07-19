@@ -44,6 +44,13 @@ jobs:
         with:
           token: ${{ secrets.TOKEN }}
           tag: "v${{ env.current_date }}"
+          excludeTypes: "build,docs,other,style"
+          includeInvalidCommits: true
+          writeToFile: true
+          changelogFilePath: CHANGELOG.md
+          includeRefIssues: true
+          useGitmojis: true
+          reverseOrder: false
 
       - name: Commit and Push CHANGELOG.md
         uses: stefanzweifel/git-auto-commit-action@v4
