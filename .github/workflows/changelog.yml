@@ -13,6 +13,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Configure Git to use GitHub Token
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git remote set-url origin https://x-access-token:${{ secrets.TOKEN }}@github.com/${{ github.repository }}.git
+
       - name: Ensure CHANGELOG.md exists
         run: |
           if [ ! -f CHANGELOG.md ]; then
@@ -26,7 +32,7 @@ jobs:
         id: changelog
         uses: requarks/changelog-action@v1
         with:
-          token: ${{ github.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           branch: main
 
       - name: Commit and Push CHANGELOG.md
