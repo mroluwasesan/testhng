@@ -34,20 +34,25 @@ jobs:
           COMMITTER="${{ github.event.head_commit.committer.name }}"
           CHANGES="${{ github.event.head_commit.message }}"
 
-          echo "## [$DATE] - $DATE" >> changelog.md
-          echo '' >> changelog.md
-          echo "### Comment" >> changelog.md
-          echo "- $COMMENT" >> changelog.md
-          echo '' >> changelog.md
-          echo "### Changes" >> changelog.md
-          echo "- $CHANGES" >> changelog.md
-          echo '' >> changelog.md
-          echo "### Committed by" >> changelog.md
-          echo "- $COMMITTER" >> changelog.md
-          echo '' >> changelog.md
-          echo "### Push ID" >> changelog.md
-          echo "- $PUSH_ID" >> changelog.md
-          echo '' >> changelog.md
+          # Create a temporary file with the new log entry
+          echo "## [$DATE] - $DATE" > new_log.md
+          echo '' >> new_log.md
+          echo "### Comment" >> new_log.md
+          echo "- $COMMENT" >> new_log.md
+          echo '' >> new_log.md
+          echo "### Changes" >> new_log.md
+          echo "- $CHANGES" >> new_log.md
+          echo '' >> new_log.md
+          echo "### Committed by" >> new_log.md
+          echo "- $COMMITTER" >> new_log.md
+          echo '' >> new_log.md
+          echo "### Push ID" >> new_log.md
+          echo "- $PUSH_ID" >> new_log.md
+          echo '' >> new_log.md
+
+          # Prepend the new log entry to the changelog.md
+          cat new_log.md >> changelog.md
+          rm new_log.md
 
       - name: Add and Commit Log
         run: |
@@ -58,7 +63,7 @@ jobs:
 
       - name: Push changes
         env:
-          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+          PAT_TOKEN: ${{ secrets.TOKEN }}
         run: |
           git remote set-url origin https://${PAT_TOKEN}@github.com/${{ github.repository }}.git
           git push origin main
