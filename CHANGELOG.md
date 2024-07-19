@@ -1,3 +1,19 @@
+## 🚀 Release [`eb06a0d`] - 2024-07-19
+
+### 💬 Commit Message
+```
+sent
+```
+
+### 📁 Modified Files
+- .github/workflows/sentiment-release.yml
+- changelog.md
+
+### 👤 Committed by
+`mroluwasesan`
+
+---
+
 ## 🚀 Release [`5fbf8ae`] - 2024-07-19
 
 ### 💬 Commit Message
