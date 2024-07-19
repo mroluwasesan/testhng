@@ -1,0 +1,57 @@
+name: Log Activities
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  log:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Fetch latest changes
+        run: |
+          git fetch --all
+
+      - name: Prepare Change Log
+        run: |
+          # Create or initialize the changelog.md file
+          if [ ! -f changelog.md ]; then
+            echo '# Change Log' > changelog.md
+            echo 'All notable changes to this project will be documented in this file.' >> changelog.md
+            echo '' >> changelog.md
+            echo 'The format is based on [Keep a Changelog](http://keepachangelog.com/)' >> changelog.md
+            echo 'and this project adheres to [Semantic Versioning](http://semver.org/).' >> changelog.md
+            echo '' >> changelog.md
+            echo '## [Unreleased] - $(date +%Y-%m-%d)' >> changelog.md
+            echo '' >> changelog.md
+          fi
+
+      - name: Log Commit Message
+        run: |
+          echo '### Added' >> changelog.md
+          echo "- [${{ github.event.head_commit.message }}](http://tickets.projectname.com/browse/PROJECTNAME-XXXX)" >> changelog.md
+          echo "  ${{ github.event.head_commit.message }}" >> changelog.md
+          echo '' >> changelog.md
+          echo '### Changed' >> changelog.md
+          echo '' >> changelog.md
+          echo '### Fixed' >> changelog.md
+          echo '' >> changelog.md
+
+      - name: Add and Commit Log
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add changelog.md
+          git commit -m "Update changelog.md" || echo "No changes to commit"
+
+      - name: Push changes
+        env:
+          PAT_TOKEN: ${{ secrets.TOKEN }}
+        run: |
+          git remote set-url origin https://${PAT_TOKEN}@github.com/${{ github.repository }}.git
+          git push origin main
