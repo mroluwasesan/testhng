@@ -24,22 +24,29 @@ jobs:
             echo '# Change Log' > changelog.md
             echo 'All notable changes to this project will be documented in this file.' >> changelog.md
             echo '' >> changelog.md
-            echo 'The format is based on [Keep a Changelog](http://keepachangelog.com/)' >> changelog.md
-            echo 'and this project adheres to [Semantic Versioning](http://semver.org/).' >> changelog.md
-            echo '' >> changelog.md
-            echo '## [Unreleased] - $(date +%Y-%m-%d)' >> changelog.md
-            echo '' >> changelog.md
           fi
 
       - name: Log Commit Message
         run: |
-          echo '### Added' >> changelog.md
-          echo "- [${{ github.event.head_commit.message }}](http://tickets.projectname.com/browse/PROJECTNAME-XXXX)" >> changelog.md
-          echo "  ${{ github.event.head_commit.message }}" >> changelog.md
+          DATE=$(date +%Y-%m-%d)
+          PUSH_ID="${{ github.sha }}"
+          COMMENT="${{ github.event.head_commit.message }}"
+          COMMITTER="${{ github.event.head_commit.committer.name }}"
+          CHANGES="${{ github.event.head_commit.message }}"
+
+          echo "## [$DATE] - $DATE" >> changelog.md
           echo '' >> changelog.md
-          echo '### Changed' >> changelog.md
+          echo "### Comment" >> changelog.md
+          echo "- $COMMENT" >> changelog.md
           echo '' >> changelog.md
-          echo '### Fixed' >> changelog.md
+          echo "### Changes" >> changelog.md
+          echo "- $CHANGES" >> changelog.md
+          echo '' >> changelog.md
+          echo "### Committed by" >> changelog.md
+          echo "- $COMMITTER" >> changelog.md
+          echo '' >> changelog.md
+          echo "### Push ID" >> changelog.md
+          echo "- $PUSH_ID" >> changelog.md
           echo '' >> changelog.md
 
       - name: Add and Commit Log
@@ -51,7 +58,7 @@ jobs:
 
       - name: Push changes
         env:
-          PAT_TOKEN: ${{ secrets.TOKEN }}
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
           git remote set-url origin https://${PAT_TOKEN}@github.com/${{ github.repository }}.git
           git push origin main
