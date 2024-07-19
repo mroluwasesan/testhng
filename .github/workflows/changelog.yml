@@ -1,3 +1,67 @@
+# name: Update Changelog
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   update-changelog:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
+
+#       - name: Configure Git to use GitHub Token
+#         run: |
+#           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+#           git config --global user.name "github-actions[bot]"
+#           git remote set-url origin https://x-access-token:${{ secrets.TOKEN }}@github.com/${{ github.repository }}.git
+
+#       - name: Get current date and time
+#         id: datetime
+#         run: echo "current_date=$(date -u +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+#       - name: Create a new tag
+#         run: |
+#           TAG="v${{ env.current_date }}"
+#           git tag -a "$TAG" -m "Automated tag creation"
+#           git push origin --tags
+
+#       - name: Ensure CHANGELOG.md exists
+#         run: |
+#           if [ ! -f CHANGELOG.md ]; then
+#             echo "# Changelog" > CHANGELOG.md
+#             git add CHANGELOG.md
+#             git commit -m "chore: create initial CHANGELOG.md"
+#             git push origin main
+#           fi
+
+#       - name: Update CHANGELOG
+#         id: changelog
+#         uses: requarks/changelog-action@v1
+#         with:
+#           token: ${{ secrets.TOKEN }}
+#           tag: "v${{ env.current_date }}"
+#           excludeTypes: "build,docs,other,style"
+#           includeInvalidCommits: true
+#           writeToFile: true
+#           changelogFilePath: CHANGELOG.md
+#           includeRefIssues: true
+#           useGitmojis: true
+#           reverseOrder: false
+
+#       - name: Commit and Push CHANGELOG.md
+#         uses: stefanzweifel/git-auto-commit-action@v4
+#         with:
+#           branch: main
+#           commit_message: 'docs: update CHANGELOG.md [skip ci]'
+#           file_pattern: CHANGELOG.md
+#           token: ${{ secrets.TOKEN }}
+
+
+
 name: Update Changelog
 
 on:
@@ -32,7 +96,18 @@ jobs:
       - name: Ensure CHANGELOG.md exists
         run: |
           if [ ! -f CHANGELOG.md ]; then
-            echo "# Changelog" > CHANGELOG.md
+            echo "# Change Log" > CHANGELOG.md
+            echo "All notable changes to this project will be documented in this file." >> CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            echo "The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/)." >> CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            echo "## [Unreleased] - $(date -u +%Y-%m-%d)" >> CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            echo "### Added" >> CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            echo "### Changed" >> CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            echo "### Fixed" >> CHANGELOG.md
             git add CHANGELOG.md
             git commit -m "chore: create initial CHANGELOG.md"
             git push origin main
@@ -44,7 +119,6 @@ jobs:
         with:
           token: ${{ secrets.TOKEN }}
           tag: "v${{ env.current_date }}"
-          excludeTypes: "build,docs,other,style"
           includeInvalidCommits: true
           writeToFile: true
           changelogFilePath: CHANGELOG.md
