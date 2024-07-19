@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Fetch latest changes
         run: |
@@ -26,12 +28,17 @@ jobs:
             echo '' >> CHANGELOG.md
           fi
 
-      - name: Parse commit message
-        id: commit
+      - name: Parse commit message and get modified files
+        id: commit_info
         run: |
           MESSAGE="${{ github.event.head_commit.message }}"
           echo "message<<EOF" >> $GITHUB_OUTPUT
           echo "$MESSAGE" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          MODIFIED_FILES=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | head -n 5 | sed 's/^/- /')
+          echo "modified_files<<EOF" >> $GITHUB_OUTPUT
+          echo "$MODIFIED_FILES" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Update Changelog
@@ -39,7 +46,8 @@ jobs:
           DATE=$(date +%Y-%m-%d)
           PUSH_ID="${{ github.sha }}"
           COMMITTER="${{ github.event.head_commit.committer.name }}"
-          MESSAGE="${{ steps.commit.outputs.message }}"
+          MESSAGE="${{ steps.commit_info.outputs.message }}"
+          MODIFIED_FILES="${{ steps.commit_info.outputs.modified_files }}"
 
           # Parse commit message for changelog entries
           ADDED=$(echo "$MESSAGE" | grep -i "^add:" | sed 's/^add://i' | sed 's/^/- /')
@@ -57,6 +65,10 @@ jobs:
           echo "\`\`\`" >> new_log.md
           echo "$MESSAGE" >> new_log.md
           echo "\`\`\`" >> new_log.md
+          echo "" >> new_log.md
+          
+          echo "### 📁 Modified Files" >> new_log.md
+          echo "$MODIFIED_FILES" >> new_log.md
           echo "" >> new_log.md
           
           [ ! -z "$ADDED" ] && { echo "### ✨ Added" >> new_log.md; echo "$ADDED" >> new_log.md; echo "" >> new_log.md; }

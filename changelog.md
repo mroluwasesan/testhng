@@ -1,3 +1,15 @@
+## 🚀 Release [`2869680`] - 2024-07-19
+
+### 💬 Commit Message
+```
+the some modification on the README file
+```
+
+### 👤 Committed by
+`mroluwasesan`
+
+---
+
 ## 🚀 Release [`b16f9a7`] - 2024-07-19
 
 ### 👤 Committed by
