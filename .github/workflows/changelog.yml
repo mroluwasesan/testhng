@@ -19,6 +19,15 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git remote set-url origin https://x-access-token:${{ secrets.TOKEN }}@github.com/${{ github.repository }}.git
 
+      - name: Get current date and time
+        id: datetime
+        run: echo "current_date=$(date -u +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+      - name: Create a new tag
+        run: |
+          git tag -a "v$(date -u +%Y%m%d%H%M%S)" -m "Automated tag creation"
+          git push origin --tags
+
       - name: Ensure CHANGELOG.md exists
         run: |
           if [ ! -f CHANGELOG.md ]; then
@@ -26,14 +35,13 @@ jobs:
             git add CHANGELOG.md
             git commit -m "chore: create initial CHANGELOG.md"
             git push origin main
-          fi
-
+          
       - name: Update CHANGELOG
         id: changelog
         uses: requarks/changelog-action@v1
         with:
           token: ${{ secrets.TOKEN }}
-          branch: main
+          tag: "v${{ env.current_date }}"
 
       - name: Commit and Push CHANGELOG.md
         uses: stefanzweifel/git-auto-commit-action@v4
@@ -41,3 +49,4 @@ jobs:
           branch: main
           commit_message: 'docs: update CHANGELOG.md [skip ci]'
           file_pattern: CHANGELOG.md
+          token: ${{ secrets.TOKEN }}
