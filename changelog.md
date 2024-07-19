@@ -14,3 +14,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+### Added
+- [Delete CHANGELOG.md](http://tickets.projectname.com/browse/PROJECTNAME-XXXX)
+  Delete CHANGELOG.md
+
+### Changed
+
+### Fixed
+
