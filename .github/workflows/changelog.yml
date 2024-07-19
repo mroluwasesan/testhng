@@ -25,7 +25,8 @@ jobs:
 
       - name: Create a new tag
         run: |
-          git tag -a "v$(date -u +%Y%m%d%H%M%S)" -m "Automated tag creation"
+          TAG="v${{ env.current_date }}"
+          git tag -a "$TAG" -m "Automated tag creation"
           git push origin --tags
 
       - name: Ensure CHANGELOG.md exists
@@ -35,7 +36,8 @@ jobs:
             git add CHANGELOG.md
             git commit -m "chore: create initial CHANGELOG.md"
             git push origin main
-          
+          fi
+
       - name: Update CHANGELOG
         id: changelog
         uses: requarks/changelog-action@v1
