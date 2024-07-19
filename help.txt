@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+erg
 
 jobs:
   log:
