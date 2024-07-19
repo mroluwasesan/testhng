@@ -113,6 +113,12 @@ jobs:
             git push origin main
           fi
 
+      - name: Debug: List Files
+        run: ls -la
+
+      - name: Debug: Show CHANGELOG.md Contents
+        run: cat CHANGELOG.md
+
       - name: Update CHANGELOG
         id: changelog
         uses: requarks/changelog-action@v1
@@ -125,6 +131,9 @@ jobs:
           includeRefIssues: true
           useGitmojis: true
           reverseOrder: false
+
+      - name: Debug: Show Updated CHANGELOG.md Contents
+        run: cat CHANGELOG.md
 
       - name: Commit and Push CHANGELOG.md
         uses: stefanzweifel/git-auto-commit-action@v4
